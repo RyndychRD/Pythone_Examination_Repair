@@ -8,6 +8,7 @@ for package in os.listdir(os.getcwd()+'/data'):
 	package_temp_name='temp'
 	package_res_name='test'
 	password_zip = 'Moreum saver'
+	password_zip =bytes(password_zip, 'utf-8')
 
 	zip_file = ZipFile(package_name)
 	zip_file.setpassword(password_zip)
@@ -21,8 +22,7 @@ for package in os.listdir(os.getcwd()+'/data'):
 		unpack_test.write(unzip_test)
 		unpack_test.close()
 
-	f=open(package_temp_name+'/res')
-
+	f=open(package_temp_name+'/res','r',encoding='cp1251')
 	for line in f:
 		if line[0]=="{":
 			line=line.strip()
