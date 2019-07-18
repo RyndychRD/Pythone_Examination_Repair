@@ -40,7 +40,7 @@ for package in os.listdir(os.getcwd() + '/data'):
             unpack_test.write(unzip_test)
             unpack_test.close()
 
-        # Считывание имя файла, который должен быть в системе дистанционки
+        # Считываем вопросы и ответы из каждого файла
         f = open(package_res_name + '/que1', 'r', encoding='cp1251')
         document.add_heading('Вопрос 1', level=1)
         for line in f:
@@ -68,7 +68,7 @@ for package in os.listdir(os.getcwd() + '/data'):
         document.save(package_res_name + '.docx')
         document = Document()
 
-        # переименование временного файла в нужный
+        #удаление временной папки
         if os.path.exists(package_res_name):
             path = os.path.join(os.path.abspath(os.path.dirname(__file__)), package_res_name)
             shutil.rmtree(path)
