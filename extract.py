@@ -2,7 +2,7 @@ import subprocess
 import os
 from zipfile import ZipFile
 import shutil
-#used python-docx 0.8
+# used python-docx 0.8
 from docx import Document
 
 document = Document()
@@ -16,6 +16,10 @@ password_zip = bytes(password_zip, 'utf-8')
 package_output_name = '!RESULT'
 
 # результаты будут в папке result
+#Очищаем предыдущие результаты, чтоб не мешались
+if os.path.exists(package_output_name):
+    shutil.rmtree(package_output_name)
+#Нужен в случае первого запуска программы
 if not os.path.exists(package_output_name):
     os.mkdir(package_output_name)
 if not os.path.exists(package_error_name):
@@ -35,45 +39,63 @@ for package in os.listdir(os.getcwd() + '/data'):
         for item in zip_file.infolist():
             filepath = item.filename
             filename = os.path.basename(filepath)
-            unzip_test = zip_file.read(filepath, pwd=password_zip)
+            try:
+                unzip_test = zip_file.read(filepath, pwd=password_zip)
+            except :
+                print("ERROR ON " + package)
+                shutil.move("data/" + package, package_error_name + "/" + package)
+                break
+
             unpack_test = open(package_res_name + "/" + filename, 'wb+')
             unpack_test.write(unzip_test)
             unpack_test.close()
 
-        # Считываем вопросы и ответы из каждого файла
-        f = open(package_res_name + '/que1', 'r', encoding='cp1251')
-        document.add_heading('Вопрос 1', level=1)
-        for line in f:
-            document.add_paragraph(line)
-        f.close()
+        if (os.path.exists(package_res_name + '/que1') and
+                os.path.exists(package_res_name + '/que2') and
+                os.path.exists(package_res_name + '/ans1') and
+                os.path.exists(package_res_name + '/ans2') and
+                os.path.exists(package_res_name + '/res')):
+            # Считываем вопросы и ответы из каждого файла
+            f = open(package_res_name + '/que1', 'r', encoding='cp1251')
+            document.add_heading('Вопрос 1', level=1)
+            for line in f:
+                document.add_paragraph(line)
+            f.close()
 
-        f = open(package_res_name + '/ans1', 'r', encoding='cp1251')
-        document.add_heading('Ответ:', level=1)
-        for line in f:
-            document.add_paragraph(line)
-        f.close()
+            f = open(package_res_name + '/ans1', 'r', encoding='cp1251')
+            document.add_heading('Ответ:', level=1)
+            for line in f:
+                document.add_paragraph(line)
+            f.close()
 
-        f = open(package_res_name + '/que2', 'r', encoding='cp1251')
-        document.add_heading('Вопрос 2', level=1)
-        for line in f:
-            document.add_paragraph(line)
-        f.close()
+            f = open(package_res_name + '/que2', 'r', encoding='cp1251')
+            document.add_heading('Вопрос 2', level=1)
+            for line in f:
+                document.add_paragraph(line)
+            f.close()
 
-        f = open(package_res_name + '/ans2', 'r', encoding='cp1251')
-        document.add_heading('Ответ:', level=1)
-        for line in f:
-            document.add_paragraph(line)
-        f.close()
+            f = open(package_res_name + '/ans2', 'r', encoding='cp1251')
+            document.add_heading('Ответ:', level=1)
+            for line in f:
+                document.add_paragraph(line)
+            f.close()
 
-        document.save(package_res_name + '.docx')
-        document = Document()
+            document.save(package_res_name + '.docx')
+            document = Document()
+        else:
+            if os.path.exists(package_res_name + '/res'):
+                f = open(package_res_name + '/res', 'r', encoding='cp1251')
+                i = 0
+                for line in f:
+                    if i==8:
+                        document.save(package_output_name+"/ТЕСТ НА " + line + " БАЛЛОВ, "+package+'.docx')
+                        document=Document()
+                    i = i + 1
 
-        #удаление временной папки
+        # удаление временной папки
         if os.path.exists(package_res_name):
             path = os.path.join(os.path.abspath(os.path.dirname(__file__)), package_res_name)
             shutil.rmtree(path)
-    #	except:
-#		os.rename(package,package_error_name+'/'+package)
 
 # удаление мусора с предыдущей работы программы
 if os.path.exists(package_temp_name):
