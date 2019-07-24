@@ -49,7 +49,7 @@ for package in os.listdir(os.getcwd() + '/data'):
             unpack_test = open(package_res_name + "/" + filename, 'wb+')
             unpack_test.write(unzip_test)
             unpack_test.close()
-
+        #Для письменных экзаменов
         if (os.path.exists(package_res_name + '/que1') and
                 os.path.exists(package_res_name + '/que2') and
                 os.path.exists(package_res_name + '/ans1') and
@@ -83,6 +83,7 @@ for package in os.listdir(os.getcwd() + '/data'):
             document.save(package_res_name + '.docx')
             document = Document()
         else:
+            #Для тестов
             if os.path.exists(package_res_name + '/res'):
                 f = open(package_res_name + '/res', 'r', encoding='cp1251')
                 i = 0
